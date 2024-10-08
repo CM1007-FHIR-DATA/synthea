@@ -7,7 +7,7 @@ if [ -z "$NUM" ]; then
 fi
 
 ./run_synthea \
-  --exporter.fhir.bulk_data false \
+  --exporter.fhir.bulk_data true \
   --exporter.fhir.included_resources Patient,Encounter,Observation,Condition,Practitioner \
   --exporter.practitioner.fhir.export true \
   -cs 54321 \
