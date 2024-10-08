@@ -17,11 +17,16 @@ import org.mitre.synthea.helpers.SimpleCSV;
 import org.mitre.synthea.helpers.Utilities;
 
 /**
- * Demographics class holds the information from the towns.json and associated county config files.
- * This data is used to build up a synthetic population matching these real-world statistics. A
- * single instance of Demographics represents a single city or town. The Ages, Gender, Race, Income,
- * and Education properties are maps of frequency information. TODO: add ways to better wrap these
- * maps so they are more accessible and useful. TODO: merge this with Location somehow. they
+ * Demographics class holds the information from the towns.json and associated
+ * county config files.
+ * This data is used to build up a synthetic population matching these
+ * real-world statistics. A
+ * single instance of Demographics represents a single city or town. The Ages,
+ * Gender, Race, Income,
+ * and Education properties are maps of frequency information. TODO: add ways to
+ * better wrap these
+ * maps so they are more accessible and useful. TODO: merge this with Location
+ * somehow. they
  * probably don't need to be separate classes
  */
 public class Demographics implements Comparable<Demographics>, Serializable {
@@ -45,6 +50,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
 
   /**
    * Pick an age based on the population distribution for the city.
+   * 
    * @param random random to use
    * @return the age in years
    */
@@ -54,8 +60,10 @@ public class Demographics implements Comparable<Demographics>, Serializable {
       ageDistribution = buildRandomCollectionFromMap(ages);
     }
     /*
-     * Sample Age frequency: "ages": { "0..4": 0.03810425832699584, "5..9": 0.04199539968180355,
-     * [truncated] "75..79": 0.04838265689371212, "80..84": 0.037026496153182195, "85..110":
+     * Sample Age frequency: "ages": { "0..4": 0.03810425832699584, "5..9":
+     * 0.04199539968180355,
+     * [truncated] "75..79": 0.04838265689371212, "80..84": 0.037026496153182195,
+     * "85..110":
      * 0.040978290790498896 }
      */
 
@@ -73,6 +81,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
 
   /**
    * Pick a gender based on the population distribution for the city.
+   * 
    * @param random random to use
    * @return the gender
    */
@@ -93,6 +102,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
   /**
    * Pick a race based on the population distribution for the city.
    * Uses the US Census definition for race
+   * 
    * @param random random to use
    * @return the race
    */
@@ -129,11 +139,14 @@ public class Demographics implements Comparable<Demographics>, Serializable {
 
   /**
    * Selects a language based on race and ethnicity.
-   * For those of Hispanic ethnicity, language statistics are pulled from the national distribution
-   * of spoken languages. For non-Hispanic, national distributions by race are used.
-   * @param race US Census race
+   * For those of Hispanic ethnicity, language statistics are pulled from the
+   * national distribution
+   * of spoken languages. For non-Hispanic, national distributions by race are
+   * used.
+   * 
+   * @param race      US Census race
    * @param ethnicity "hispanic" or "nonhispanic"
-   * @param random random to use
+   * @param random    random to use
    * @return the language spoken
    */
   public String languageFromRaceAndEthnicity(String race, String ethnicity,
@@ -146,22 +159,27 @@ public class Demographics implements Comparable<Demographics>, Serializable {
       // - 27,902,879 speak Spanish and English very well or well (54.3%)
       // - 9,278,993 speak Spanish and English not well or not at all (18%)
       // - 0.4% speak another language, which we will ignore to simplify things
-      // 48.85% will speak English (only English + half of bilingual) the rest will speak Spanish
+      // 48.85% will speak English (only English + half of bilingual) the rest will
+      // speak Spanish
       hispanicLanguageUsage.add(48.85, "english");
       hispanicLanguageUsage.add(51.15, "spanish");
       return hispanicLanguageUsage.next(random);
     } else {
       switch (race) {
-        // For the people who are of nonhispanic ethnicity, use the national distribution of
+        // For the people who are of nonhispanic ethnicity, use the national
+        // distribution of
         // languages spoken:
         // http://www2.census.gov/library/data/tables/2008/demo/language-use/2009-2013-acs-lang-tables-nation.xls?#
         //
         // While the census does not provide a breakdown of language usage by
-        // race, previously Synthea would associate languages to race through ethnicity. This
+        // race, previously Synthea would associate languages to race through ethnicity.
+        // This
         // code "flattens" out that older relationship.
         case "white":
-          // Only 1.5% of people who report a race of white alone speak English less than very well.
-          // Given the previous categorization of languages by Synthea, the numbers line up closely.
+          // Only 1.5% of people who report a race of white alone speak English less than
+          // very well.
+          // Given the previous categorization of languages by Synthea, the numbers line
+          // up closely.
           // https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_17_5YR_B16005H&prodType=table
           RandomCollection<String> whiteLanguageUsage = new RandomCollection();
           whiteLanguageUsage.add(0.002, "italian");
@@ -174,7 +192,8 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           whiteLanguageUsage.add(0.984, "english");
           return whiteLanguageUsage.next(random);
         case "black":
-          // Only 3% of people who report a race of black or African American alone speak English
+          // Only 3% of people who report a race of black or African American alone speak
+          // English
           // less than very well.
           // https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_17_5YR_B16005B&prodType=table
           RandomCollection<String> blackLanguageUsage = new RandomCollection();
@@ -183,7 +202,8 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           blackLanguageUsage.add(0.97, "english");
           return blackLanguageUsage.next(random);
         case "asian":
-          // 33% of people who report a race of Asian alone speak English less than very well
+          // 33% of people who report a race of Asian alone speak English less than very
+          // well
           // https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_17_5YR_B16005D&prodType=table
           // From the national language numbers:
           // - 2,896,766 Chinese speakers
@@ -191,8 +211,10 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           // - 1,117,343 Korean speakers
           // - 1,399,936 Vietnamese speakers
           // - 643,337 Hindi speakers
-          // So, 44.5% of the selected Asian language speakers use Chinese, which accounts for 14.7%
-          // of the overall population of people who report a race of Asian. This is repeated for
+          // So, 44.5% of the selected Asian language speakers use Chinese, which accounts
+          // for 14.7%
+          // of the overall population of people who report a race of Asian. This is
+          // repeated for
           // the rest of the languages.
           RandomCollection<String> asianLanguageUsage = new RandomCollection();
           asianLanguageUsage.add(0.147, "chinese");
@@ -203,7 +225,8 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           asianLanguageUsage.add(0.67, "english");
           return asianLanguageUsage.next(random);
         case "native":
-          // TODO: This is overly simplistic, 7% of people who report a race of American Indian and
+          // TODO: This is overly simplistic, 7% of people who report a race of American
+          // Indian and
           // Alaska Native speak English less than well.
           // https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_17_5YR_B16005C&prodType=table
           return "english";
@@ -214,10 +237,13 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           hawaiianLanguageUsage.add(0.109, "hawaiian");
           return hawaiianLanguageUsage.next(random);
         case "other":
-          // 36% of people who report a race of something else speak English less than well
+          // 36% of people who report a race of something else speak English less than
+          // well
           // https://factfinder.census.gov/faces/tableservices/jsf/pages/productview.xhtml?pid=ACS_17_5YR_B16005F&prodType=table
-          // There are 924,374 Arabic speakers estimated nationally. Since there are 14,270,613
-          // people report some other race, we'll give people in this race category a 6.5% chance
+          // There are 924,374 Arabic speakers estimated nationally. Since there are
+          // 14,270,613
+          // people report some other race, we'll give people in this race category a 6.5%
+          // chance
           // of speaking Arabic.
           // TODO: Figure out what languages to assign to the missing 30%
           RandomCollection<String> otherLanguageUsage = new RandomCollection();
@@ -233,6 +259,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
 
   /**
    * Pick an ethnicity based on the population distribution for the city.
+   * 
    * @param random the random to use
    * @return the income
    */
@@ -246,9 +273,12 @@ public class Demographics implements Comparable<Demographics>, Serializable {
     }
 
     /*
-     * Sample Income frequency: "income": { "mean": 81908, "median": 58933, "00..10":
-     * 0.07200000000000001, "10..15": 0.055, "15..25": 0.099, "25..35": 0.079, "35..50": 0.115,
-     * "50..75": 0.205, "75..100": 0.115, "100..150": 0.155, "150..200": 0.052000000000000005,
+     * Sample Income frequency: "income": { "mean": 81908, "median": 58933,
+     * "00..10":
+     * 0.07200000000000001, "10..15": 0.055, "15..25": 0.099, "25..35": 0.079,
+     * "35..50": 0.115,
+     * "50..75": 0.205, "75..100": 0.115, "100..150": 0.155, "150..200":
+     * 0.052000000000000005,
      * "200..999": 0.054000000000000006 },
      */
 
@@ -264,14 +294,14 @@ public class Demographics implements Comparable<Demographics>, Serializable {
   }
 
   /**
-   * Simple linear formula just maps federal poverty level to 0.0 and 75,000 to 1.0.
+   * Simple linear formula just maps federal poverty level to 0.0 and 75,000 to
+   * 1.0.
    * The 75,000 figure was chosen based on
    * https://www.princeton.edu/~deaton/downloads/
    * deaton_kahneman_high_income_improves_evaluation_August2010.pdf.
    */
   public double incomeLevel(int income) {
-    double poverty =
-            Config.getAsDouble("generate.demographics.socioeconomic.income.poverty", 11000);
+    double poverty = Config.getAsDouble("generate.demographics.socioeconomic.income.poverty", 11000);
     double high = Config.getAsDouble("generate.demographics.socioeconomic.income.high", 75000);
 
     if (income >= high) {
@@ -285,12 +315,12 @@ public class Demographics implements Comparable<Demographics>, Serializable {
 
   /**
    * Return the poverty ratio.
+   * 
    * @param income Annual income.
    * @return poverty ratio.
    */
   public double povertyRatio(int income) {
-    double poverty =
-            Config.getAsDouble("generate.demographics.socioeconomic.income.poverty", 11000);
+    double poverty = Config.getAsDouble("generate.demographics.socioeconomic.income.poverty", 11000);
     return ((double) income) / poverty;
   }
 
@@ -307,25 +337,26 @@ public class Demographics implements Comparable<Demographics>, Serializable {
   }
 
   /**
-   * Return a random number between the configured bounds for a specified education level.
+   * Return a random number between the configured bounds for a specified
+   * education level.
    */
   public double educationLevel(String level, RandomNumberGenerator random) {
     double lessThanHsMin = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.less_than_hs.min", 0.0);
+        "generate.demographics.socioeconomic.education.less_than_hs.min", 0.0);
     double lessThanHsMax = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.less_than_hs.max", 0.5);
+        "generate.demographics.socioeconomic.education.less_than_hs.max", 0.5);
     double hsDegreeMin = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.hs_degree.min", 0.1);
+        "generate.demographics.socioeconomic.education.hs_degree.min", 0.1);
     double hsDegreeMax = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.hs_degree.max", 0.75);
+        "generate.demographics.socioeconomic.education.hs_degree.max", 0.75);
     double someCollegeMin = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.some_college.min", 0.3);
+        "generate.demographics.socioeconomic.education.some_college.min", 0.3);
     double someCollegeMax = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.some_college.max", 0.85);
+        "generate.demographics.socioeconomic.education.some_college.max", 0.85);
     double bsDegreeMin = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.bs_degree.min", 0.5);
+        "generate.demographics.socioeconomic.education.bs_degree.min", 0.5);
     double bsDegreeMax = Config.getAsDouble(
-            "generate.demographics.socioeconomic.education.bs_degree.max", 1.0);
+        "generate.demographics.socioeconomic.education.bs_degree.max", 1.0);
 
     switch (level) {
       case "less_than_hs":
@@ -341,23 +372,21 @@ public class Demographics implements Comparable<Demographics>, Serializable {
     }
   }
 
-
   /**
    * Calculate the socio-economic score for the supplied parameters.
    */
   public double socioeconomicScore(double income, double education, double occupation) {
     double incomeWeight = Config.getAsDouble("generate.demographics.socioeconomic.weights.income");
-    double educationWeight =
-            Config.getAsDouble("generate.demographics.socioeconomic.weights.education");
-    double occupationWeight =
-            Config.getAsDouble("generate.demographics.socioeconomic.weights.occupation");
+    double educationWeight = Config.getAsDouble("generate.demographics.socioeconomic.weights.education");
+    double occupationWeight = Config.getAsDouble("generate.demographics.socioeconomic.weights.occupation");
 
     return (income * incomeWeight) + (education * educationWeight)
         + (occupation * occupationWeight);
   }
 
   /**
-   * Return a high/middle/low socio economic category based on the supplied score and the
+   * Return a high/middle/low socio economic category based on the supplied score
+   * and the
    * configured stratifier values.
    */
   public String socioeconomicCategory(double score) {
@@ -374,34 +403,34 @@ public class Demographics implements Comparable<Demographics>, Serializable {
   }
 
   /**
-   * Get a Table of (State, CityId, Demographics), with the given restrictions on state and city.
+   * Get a Table of (State, CityId, Demographics), with the given restrictions on
+   * state and city.
    *
    * @param state
-   *          The state that is desired. Other states will be excluded from the results.
+   *              The state that is desired. Other states will be excluded from
+   *              the results.
    * @return Table of (State, CityId, Demographics)
    * @throws IOException
-   *           if any exception occurs in reading the demographics file
+   *                     if any exception occurs in reading the demographics file
    */
   public static Table<String, String, Demographics> load(String state)
       throws IOException {
     String filename = Config.get("generate.demographics.default_file");
     String csv = Utilities.readResource(filename, true, true);
 
-    List<? extends Map<String,String>> demographicsCsv = SimpleCSV.parse(csv);
+    List<? extends Map<String, String>> demographicsCsv = SimpleCSV.parse(csv);
 
     Table<String, String, Demographics> table = HashBasedTable.create();
 
-    for (Map<String,String> demographicsLine : demographicsCsv) {
+    for (Map<String, String> demographicsLine : demographicsCsv) {
       String currCityId = demographicsLine.get("ID");
       String currState = demographicsLine.get("STNAME");
-      System.out.println("DEBUG in file: Demographics.java: Got " + currCityId + " and " + currState + " looking for state:" + state);
 
       // for now, only allow one state at a time
       if (state != null && state.equalsIgnoreCase(currState)) {
         Demographics parsed = csvLineToDemographics(demographicsLine);
 
         table.put(currState, currCityId, parsed);
-        System.out.println("DEBUG in file: Demographics.java: Got " + parsed);
 
       }
     }
@@ -410,13 +439,14 @@ public class Demographics implements Comparable<Demographics>, Serializable {
   }
 
   /**
-   * The index of the entry in this list + 1 == the column header in the CSV for that age group.
+   * The index of the entry in this list + 1 == the column header in the CSV for
+   * that age group.
    * For example, age range 0-4 is stored in the CSV with column header "1".
    */
   private static final List<String> CSV_AGE_GROUPS = Arrays.asList(
-          "0..4", "5..9", "10..14", "15..19", "20..24", "25..29",
-          "30..34", "35..39", "40..44", "45..49", "50..54",
-          "55..59", "60..64", "65..69", "70..74", "75..79", "80..84", "85..110");
+      "0..4", "5..9", "10..14", "15..19", "20..24", "25..29",
+      "30..34", "35..39", "40..44", "45..49", "50..54",
+      "55..59", "60..64", "65..69", "70..74", "75..79", "80..84", "85..110");
 
   private static final List<String> CSV_RACES = Arrays.asList(
       "WHITE", "BLACK", "ASIAN", "NATIVE", "OTHER");
@@ -436,7 +466,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
    * @param line Line representing one city, parsed via SimpleCSV
    * @return the Demographics for that city
    */
-  private static Demographics csvLineToDemographics(Map<String,String> line) {
+  private static Demographics csvLineToDemographics(Map<String, String> line) {
     Demographics d = new Demographics();
 
     d.population = Double.valueOf(line.get("POPESTIMATE2015")).longValue();
@@ -518,6 +548,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
    * A distribution with all zero values will cause run-time issues.
    * If the values are all zero, an equally weighted uniform distribution
    * will be set.
+   * 
    * @param map The map to check.
    */
   private static void nonZeroDefaults(Map<String, Double> map) {
@@ -526,7 +557,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
     // Now check if all values are zero
     boolean allZero = true;
     for (Double value : map.values()) {
-      if (value != 0)  {
+      if (value != 0) {
         allZero = false;
         break;
       }
