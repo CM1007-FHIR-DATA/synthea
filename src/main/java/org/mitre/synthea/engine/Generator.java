@@ -854,7 +854,7 @@ public class Generator {
     String race = city.pickRace(random);
     demographicsOutput.put(Person.RACE, race);
     String ethnicity = city.pickEthnicity(random);
-    // demographicsOutput.put(Person.ETHNICITY, ethnicity);
+    demographicsOutput.put(Person.ETHNICITY, ethnicity);
     String language = city.languageFromRaceAndEthnicity(race, ethnicity, random);
     demographicsOutput.put(Person.FIRST_LANGUAGE, language);
 

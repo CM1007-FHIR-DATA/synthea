@@ -161,7 +161,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
       // - 0.4% speak another language, which we will ignore to simplify things
       // 48.85% will speak English (only English + half of bilingual) the rest will
       // speak Spanish
-      hispanicLanguageUsage.add(48.85, "english");
+      hispanicLanguageUsage.add(48.85, "swedish");
       hispanicLanguageUsage.add(51.15, "spanish");
       return hispanicLanguageUsage.next(random);
     } else {
@@ -189,7 +189,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           whiteLanguageUsage.add(0.002, "portuguese");
           whiteLanguageUsage.add(0.003, "russian");
           whiteLanguageUsage.add(0.001, "greek");
-          whiteLanguageUsage.add(0.984, "english");
+          whiteLanguageUsage.add(0.984, "swedish");
           return whiteLanguageUsage.next(random);
         case "black":
           // Only 3% of people who report a race of black or African American alone speak
@@ -199,7 +199,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           RandomCollection<String> blackLanguageUsage = new RandomCollection();
           blackLanguageUsage.add(0.004, "french");
           blackLanguageUsage.add(0.026, "spanish");
-          blackLanguageUsage.add(0.97, "english");
+          blackLanguageUsage.add(0.97, "swedish");
           return blackLanguageUsage.next(random);
         case "asian":
           // 33% of people who report a race of Asian alone speak English less than very
@@ -222,7 +222,7 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           asianLanguageUsage.add(0.056, "korean");
           asianLanguageUsage.add(0.07, "vietnamese");
           asianLanguageUsage.add(0.033, "hindi");
-          asianLanguageUsage.add(0.67, "english");
+          asianLanguageUsage.add(0.67, "swedish");
           return asianLanguageUsage.next(random);
         case "native":
           // TODO: This is overly simplistic, 7% of people who report a race of American
@@ -248,11 +248,11 @@ public class Demographics implements Comparable<Demographics>, Serializable {
           // TODO: Figure out what languages to assign to the missing 30%
           RandomCollection<String> otherLanguageUsage = new RandomCollection();
           otherLanguageUsage.add(0.065, "arabic");
-          otherLanguageUsage.add(0.935, "english");
+          otherLanguageUsage.add(0.935, "swedish");
           return otherLanguageUsage.next(random);
         default:
           // Should never happen
-          return "english";
+          return "swedish";
       }
     }
   }
